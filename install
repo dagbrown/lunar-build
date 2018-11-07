@@ -6,8 +6,14 @@ cp bin/* $HOME/bin
 mkdir -p $HOME/.config/systemd/user
 cp systemd.d/* $HOME/.config/systemd/user
 
+systemctl --user daemon-reload
+
+echo -n 'Checking for sudo...'
+
 if ! lvu installed sudo >/dev/null
 then
+    echo 'ok'
+else
     echo 'sudo not installed'
     echo -n "Enter root's "
     su -c 'lin sudo'
@@ -15,8 +21,12 @@ then
     su -c 'echo "'$(whoami)' ALL=(ALL) NOPASSWD: ALL >> /etc/sudoers'
 fi
 
-if ! lvu installed git
+echo -n 'Checking for git...'
+
+if lvu installed git > /dev/null
 then
+    echo 'ok'
+else
     echo 'git not installed'
     sudo lin git
 fi
