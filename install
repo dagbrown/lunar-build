@@ -1,0 +1,22 @@
+#!/bin/sh
+
+mkdir $HOME/bin
+cp bin/* $HOME/bin
+
+mkdir -p $HOME/.config/systemd/user
+cp systemd.d/* $HOME/.config/systemd/user
+
+if ! lvu installed sudo >/dev/null
+then
+    echo 'sudo not installed'
+    echo -n "Enter root's "
+    su -c 'lin sudo'
+    echo -n "Enter root's "
+    su -c 'echo "'$(whoami)' ALL=(ALL) NOPASSWD: ALL >> /etc/sudoers'
+fi
+
+if ! lvu installed git
+then
+    echo 'git not installed'
+    sudo lin git
+fi
