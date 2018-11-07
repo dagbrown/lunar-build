@@ -1,21 +1,5 @@
 #!/bin/bash
 
-fix_build() {
-    if [ -f conf/modules.exclude ]
-    then
-    	if ! grep -q zfs conf/modules.exclude
-        then
-            perl -pi -e 'if(/EXCLUDE_MODULES/) { s/$/ spl zfs zfs-utils openssl/ }' conf/modules.exclude
-        fi
-    fi
-
-    if [ -d BUILD/bin ]
-    then
-        ( cd BUILD/bin && sudo ln -fs bash sh )
-    fi
-   
-}
-
 mkdir -p ~/logs
 
 exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
@@ -36,7 +20,7 @@ makecount=$[corecount*2]
 cat >> conf/config << EOT
 ISO_ARCH = $(arch)
 ISO_MAJOR = 1.8.0
-ISO_MINOR = $(date +evil-%Y%m%d)
+ISO_MINOR = $(date +naughty-%Y%m%d)
 
 ifeq (,\$(ISO_MINOR))
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
@@ -59,7 +43,7 @@ ISO_MAKES = ${makecount}
 ISO_GCCARCH = $(arch)
 EOT
 
-fix_build && sudo make || fix_build && sudo make || fix_build && sudo make
+sudo make || sudo make || sudo make
 
 echo "Build finished at $(date)"
 
@@ -74,7 +58,7 @@ then
             sha256sum $i > ${i}.sha256
         fi
     done
-    rsync -av ../daily/* shell.lart.ca:data/webpage/lart.ca/public/lunar
+    # rsync -av ../daily/* shell.lart.ca:data/webpage/lart.ca/public/lunar
 fi
 
 echo "Build finished at $(date)"
