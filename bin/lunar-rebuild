@@ -1,0 +1,51 @@
+#!/bin/bash
+
+fix_build() {
+    if [ -f conf/modules.exclude ]
+    then
+    	if ! grep -q zfs conf/modules.exclude
+        then
+            perl -pi -e 'if(/EXCLUDE_MODULES/) { s/$/ spl zfs zfs-utils openssl/ }' conf/modules.exclude
+        fi
+    fi
+
+    if [ -d BUILD/bin ]
+    then
+        ( cd BUILD/bin && sudo ln -fs bash sh )
+    fi
+   
+}
+
+mkdir -p ~/logs
+
+exec > ~/logs/rebuild.$(date +%Y%m%d%H%M).log 2>&1
+
+echo "Rebuild started at $(date)"
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:.
+export PATH
+
+cd $HOME/lunar-iso
+
+fix_build && sudo make || fix_build && sudo make || fix_build && sudo make
+
+echo "Build finished at $(date)"
+
+if [ -f *.iso ]
+then
+    mkdir -p ../daily
+    cp *.iso ../daily
+    (
+        cd ../daily
+        for i in *.iso
+        do
+            if ! [ -f ${i}.sha256 ]
+            then
+                sha256sum $i > ${i}.sha256
+            fi
+        done
+    )
+    rsync -av ../daily/* shell.lart.ca:data/webpage/lart.ca/public/lunar
+fi
+
+echo "Rebuild finished at $(date)"
