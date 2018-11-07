@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir $HOME/bin
+mkdir -p $HOME/bin
 cp bin/* $HOME/bin
 
 mkdir -p $HOME/.config/systemd/user
