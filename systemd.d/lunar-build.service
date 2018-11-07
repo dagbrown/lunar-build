@@ -1,0 +1,5 @@
+[Unit]
+Description=Lunar ISO build service
+
+[Service]
+ExecStart=/home/dagbrown/bin/lunar-build

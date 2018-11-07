@@ -1,0 +1,5 @@
+[Unit]
+Description=Lunar ISO rebuild service, for use after fixing thing manually
+
+[Service]
+ExecStart=/home/dagbrown/bin/lunar-rebuild
