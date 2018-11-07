@@ -10,7 +10,7 @@ systemctl --user daemon-reload
 
 echo -n 'Checking for sudo...'
 
-if ! lvu installed sudo >/dev/null
+if lvu installed sudo >/dev/null
 then
     echo 'ok'
 else
