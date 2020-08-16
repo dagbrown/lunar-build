@@ -18,7 +18,7 @@ else
     echo -n "Enter root's "
     su -c 'lin sudo'
     echo -n "Enter root's "
-    su -c 'echo "'$(whoami)' ALL=(ALL) NOPASSWD: ALL >> /etc/sudoers'
+    su -c 'echo "'$(whoami)' ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
 fi
 
 
