@@ -20,7 +20,9 @@ makecount=$[corecount*2]
 cat >> conf/config << EOT
 ISO_ARCH = $(arch)
 ISO_MAJOR = 1.8.0
-ISO_MINOR = $(date +naughty-%Y%m%d)
+
+# change this to taste
+ISO_MINOR = $(date +testing-%Y%m%d)
 
 ifeq (,\$(ISO_MINOR))
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
@@ -43,7 +45,9 @@ ISO_MAKES = ${makecount}
 ISO_GCCARCH = $(arch)
 EOT
 
-sudo make || sudo make || sudo make
+sudo make || {
+    sudo make clean && sudo make
+}
 
 echo "Build finished at $(date)"
 
