@@ -22,7 +22,7 @@ else
 fi
 
 
-for module in lz4 libisoburn syslinux efitools squashfs git;do
+for module in lz4 libisoburn syslinux efitools squashfs git sbsigntools;do
     echo -n "Checking for ${module}..."
     if lvu installed $module > /dev/null
     then
