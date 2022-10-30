@@ -45,9 +45,7 @@ ISO_MAKES = ${makecount}
 ISO_GCCARCH = $(arch)
 EOT
 
-sudo make || {
-    sudo make clean && sudo make
-}
+sudo make
 
 echo "Build finished at $(date)"
 
@@ -69,4 +67,4 @@ then
     rsync -av ../daily/* ~/iso
 fi
 
-echo "Build finished at $(date)"
+echo "ISO finished at $(date)"
