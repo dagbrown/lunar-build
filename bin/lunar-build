@@ -62,7 +62,11 @@ then
             sha256sum $i > ${i}.sha256
         fi
     done
-    # rsync -av ../daily/* shell.lart.ca:data/webpage/lart.ca/public/lunar
+    # /home/build/iso should be a directory from outside the container
+    # mapped into it to export the iso if it built successfully
+    #
+    # change this line to put the iso wherever you prefer
+    rsync -av ../daily/* ~/iso
 fi
 
 echo "Build finished at $(date)"
