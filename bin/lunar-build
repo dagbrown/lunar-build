@@ -22,7 +22,7 @@ ISO_ARCH = $(arch)
 ISO_MAJOR = 1.8.0
 
 # change this to taste
-ISO_MINOR = $(date +testing-%Y%m%d)
+ISO_MINOR = $(date +daily-%Y%m%d)
 
 ifeq (,\$(ISO_MINOR))
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
