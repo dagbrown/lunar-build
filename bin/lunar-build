@@ -4,6 +4,31 @@ mkdir -p ~/logs
 
 exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
 
+NAME=daily
+FULLNAME="Mare Incognitum"
+
+while [[ $1 ~ ^- ]]
+do
+    case "$1" in
+        -n|--name)
+            shift
+            NAME=$1
+            shift
+        ;;
+
+        -f|--full-name)
+            shift
+            FULLNAME="$1"
+            shift
+        ;;
+    esac
+done
+
+if [ $1 ]
+then
+    NAME="$1"
+fi
+
 echo "Build started at $(date)"
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:.
@@ -22,7 +47,7 @@ ISO_ARCH = $(arch)
 ISO_MAJOR = 1.8.0
 
 # change this to taste
-ISO_MINOR = $(date +daily-%Y%m%d)
+ISO_MINOR = $(date +${NAME}-%Y%m%d)
 
 ifeq (,\$(ISO_MINOR))
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
@@ -30,7 +55,7 @@ else
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_MINOR)-\$(ISO_ARCH)
 endif
 
-ISO_CODENAME = Mare Incognitum
+ISO_CODENAME = $FULLNAME
 
 ISO_BUILD = \$(ISO_ARCH)-pc-linux-gnu
 
