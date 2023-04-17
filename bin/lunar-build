@@ -6,6 +6,8 @@ exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
 
 NAME=daily
 FULLNAME="Mare Incognitum"
+MOONBASE=default
+UPDATE=false
 
 while [[ $1 ~ ^- ]]
 do
@@ -21,6 +23,17 @@ do
             FULLNAME="$1"
             shift
         ;;
+
+        -m|--moonbase)
+            shift
+            MOONBASE_URL="$1"
+            shift
+        ;;
+
+        -u|--update)
+            shift
+            UPDATE=true
+        ;;
     esac
 done
 
@@ -33,6 +46,16 @@ echo "Build started at $(date)"
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:.
 export PATH
+
+if [[ "${MOONBASE:-default}" != default ]]
+then
+    lunar set MOONBASE_URL $MOONBASE
+    lin moonbase
+    if $UPDATE
+    then
+        lunar renew
+    fi
+fi
 
 [[ -d lunar-iso ]] && sudo rm -rf lunar-iso
 
