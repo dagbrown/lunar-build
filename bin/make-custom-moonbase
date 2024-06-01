@@ -1,0 +1,115 @@
+#!/bin/bash
+
+# make a moonbase with a PR (or several) added
+
+# usage: make-custom-moonbase <username> <branchname>
+#
+# example:
+#
+#   make-custom-moonbase -b dagbrown systemd-250
+#
+# Applies the "systemd-250" branch to the moonbase
+#
+
+
+OLD_DIR=$(pwd)
+
+TMPDIR=/tmp/custom-moonbase.$$
+
+DIRNAME=custom
+
+help() {
+    echo "Usage: make-custom-moonbase [-b <username> <branch>]"
+    echo "                            [-p <PR-id>]" 
+    echo "                            [-H <YYYY-mm-dd>]"
+    echo "                            [-u <url> <branch>]"
+    exit
+}
+
+case "$#" in
+    0)
+        help
+    ;;
+esac
+
+{
+
+    mkdir -p $TMPDIR/moonbase
+    cd $TMPDIR/moonbase
+    git clone https://github.com/lunar-linux/moonbase-core core 
+    cd core
+    while [[ $# > 0 ]]
+    do
+        case "$1" in
+            -b)
+                shift
+                git pull https://github.com/$1/moonbase-core $2
+                DIRNAME="${DIRNAME}-$1-$2"
+                shift
+                shift
+            ;;
+
+            -p)
+                shift
+                echo
+                echo 'Applying PR#'$1
+                while true
+                do
+                    curl -L https://github.com/lunar-linux/moonbase-core/pull/${1}.patch > /tmp/pr-${1}.patch
+                    if grep 'diff --git' /tmp/pr-${1}.patch
+                    then
+                        break
+                    else
+                        sleep 1
+                    fi
+                done
+                git am -3 < /tmp/pr-${1}.patch && rm /tmp/pr-${1}.patch
+                DIRNAME="${DIRNAME}-pr$1"
+                shift
+            ;;
+
+            -H) 
+                shift
+                git checkout $(git rev-list -n 1 --before="$1 00:00:00" master)
+                HISTORY_VERSION=$1
+                DIRNAME="${DIRNAME}-d$1"
+                shift
+            ;;
+            
+            -u)
+                shift
+                url=$1
+                git pull $url $2 
+                DIRNAME="${DIRNAME}-$2"
+                shift
+                shift
+            ;;
+
+            -h)
+                help
+            ;;
+        esac
+    done
+
+    cd $TMPDIR/moonbase
+    git clone https://github.com/lunar-linux/moonbase-other other
+    if [ x$HISTORY_VERSION != x ]
+    then
+        ( cd other && git checkout $(git rev-list -n 1 --before="$1 00:00:00" master); )
+    fi
+
+    cat */aliases > aliases
+    rm -rf */.git
+    cd $TMPDIR
+    mkdir -p ${OLD_DIR}/${DIRNAME}
+
+    # hack hack
+    echo 'depends ca-certificates' >> moonbase/core/utils/pciutils/DEPENDS
+
+    tar cf - moonbase | bzip2 -9 > ${OLD_DIR}/${DIRNAME}/moonbase.tar.bz2
+
+    rm -rf $TMPDIR
+
+} 1>&2
+
+echo $DIRNAME
