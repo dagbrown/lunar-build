@@ -5,36 +5,47 @@ mkdir -p ~/logs
 exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
 
 NAME=daily
-FULLNAME="Mare Incognitum"
+FULLNAME="Mare Nubium" # "Sea of Clouds"
 MOONBASE=default
 UPDATE=false
 
-while [[ $1 ~ ^- ]]
+while true
 do
-    case "$1" in
-        -n|--name)
-            shift
-            NAME=$1
-            shift
-        ;;
+    if [ $# -ge 0 ]
+    then
+        case "$1" in
+            -n|--name)
+                shift
+                NAME=$1
+                shift
+                continue
+            ;;
 
-        -f|--full-name)
-            shift
-            FULLNAME="$1"
-            shift
-        ;;
+            -f|--full-name)
+                shift
+                FULLNAME="$1"
+                shift
+                continue
+            ;;
 
-        -m|--moonbase)
-            shift
-            MOONBASE_URL="$1"
-            shift
-        ;;
+            -m|--moonbase)
+                shift
+                MOONBASE_URL="$1"
+                shift
+                continue
+            ;;
 
-        -u|--update)
-            shift
-            UPDATE=true
-        ;;
-    esac
+            -u|--update)
+                shift
+                UPDATE=true
+                continue
+            ;;
+
+            *)
+                break
+            ;;
+        esac
+    fi
 done
 
 if [ $1 ]
