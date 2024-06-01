@@ -79,6 +79,7 @@ makecount=$[corecount*2]
 cat >> conf/config << EOT
 ISO_ARCH = $(arch)
 ISO_MAJOR = 1.8.0
+ISO_DATE = $(date +%Y%m%d)
 
 # change this to taste
 ISO_MINOR = $(date +${NAME}-%Y%m%d)
