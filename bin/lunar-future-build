@@ -1,0 +1,127 @@
+#!/bin/bash
+
+mkdir -p ~/logs
+
+exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
+
+NAME=daily
+FULLNAME="Mare Adventurarum" # "Sea of Adventures"
+MOONBASE=default
+UPDATE=false
+
+while true
+do
+    if [ $# -ge 0 ]
+    then
+        case "$1" in
+            -n|--name)
+                shift
+                NAME=$1
+                shift
+                continue
+            ;;
+
+            -f|--full-name)
+                shift
+                FULLNAME="$1"
+                shift
+                continue
+            ;;
+
+            -m|--moonbase)
+                shift
+                MOONBASE_URL="$1"
+                shift
+                continue
+            ;;
+
+            -u|--update)
+                shift
+                UPDATE=true
+                continue
+            ;;
+
+            *)
+                break
+            ;;
+        esac
+    fi
+done
+
+if [ $1 ]
+then
+    NAME="$1"
+fi
+
+echo "Build started at $(date)"
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:.
+export PATH
+
+if [[ "${MOONBASE:-default}" != default ]]
+then
+    lunar set MOONBASE_URL $MOONBASE
+    lin moonbase
+    if $UPDATE
+    then
+        lunar renew
+    fi
+fi
+
+[[ -d lunar-iso ]] && sudo rm -rf lunar-iso
+
+git clone https://github.com/lunar-linux/lunar-iso.git
+cd lunar-iso &&
+    git remote add dagbrown https://github.com/dagbrown/lunar-iso.git &&
+    git fetch dagbrown &&
+    git merge dagbrown/future
+
+corecount=$(grep processor /proc/cpuinfo | wc -l)
+makecount=$[corecount*2]
+
+cat >> conf/config << EOT
+ISO_ARCH = $(arch)
+ISO_MAJOR = 1.8.0
+ISO_DATE = $(date +%Y%m%d)
+
+# change this to taste
+ISO_MINOR = $(date +${NAME}-%Y%m%d)
+
+ifeq (,\$(ISO_MINOR))
+  ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
+else
+  ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_MINOR)-\$(ISO_ARCH)
+endif
+
+ISO_CODENAME = $FULLNAME
+
+ISO_BUILD = \$(ISO_ARCH)-pc-linux-gnu
+
+ISO_CNAME = \$(ISO_VERSION) (\$(ISO_CODENAME) - \$(ISO_DATE))
+
+ISO_LABEL = \$(shell echo -n Lunar-Linux \$(ISO_CODENAME) | tr '[:space:]' _)
+
+ISO_LUNAR_MODULE = lunar
+
+ISO_MAKES = ${makecount}
+
+ISO_GCCARCH = $(arch)
+EOT
+
+sudo make
+
+echo "Build finished at $(date)"
+
+if [ -f *.iso ]
+then
+    for i in *.iso
+    do
+        sha256sum $i > ${i}.sha256
+    done
+    if [ -d ~/iso ]
+    then
+        cp -v $i ${i}.sha256 ~/iso
+    fi
+fi
+
+echo "ISO finished at $(date)"
