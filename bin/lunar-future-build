@@ -4,7 +4,7 @@ mkdir -p ~/logs
 
 exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
 
-NAME=daily
+NAME=future
 FULLNAME="Mare Adventurarum" # "Sea of Adventures"
 MOONBASE=default
 UPDATE=false
