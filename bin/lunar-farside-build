@@ -72,6 +72,8 @@ fi
 
 git clone https://gitlab.lart.ca/lunar-linux/lunar-iso.git
 
+cd lunar-iso
+
 corecount=$(grep processor /proc/cpuinfo | wc -l)
 makecount=$[corecount*2]
 
