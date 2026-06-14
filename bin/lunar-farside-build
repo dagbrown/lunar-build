@@ -70,9 +70,11 @@ fi
 
 [[ -d lunar-iso ]] && sudo rm -rf lunar-iso
 
-git clone https://gitlab.lart.ca/lunar-linux/lunar-iso.git
+git clone https://gitlab.lart.ca/dagbrown/lunar-iso.git
 
 cd lunar-iso
+
+git checkout farside
 
 corecount=$(grep processor /proc/cpuinfo | wc -l)
 makecount=$[corecount*2]
