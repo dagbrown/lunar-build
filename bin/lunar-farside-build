@@ -108,6 +108,21 @@ ISO_MAKES = ${makecount}
 ISO_GCCARCH = $(arch)
 EOT
 
+# ----------------------------------------------------------------------
+# a parade of bodges for the farside build
+# ----------------------------------------------------------------------
+sudo make stage1
+sudo make stage2-moonbase
+
+# "m4" doesn't get installed at the right time so force install it first
+sudo ISO_TARGET=$(cd BUILD && pwd) scripts/chroot-build lin m4
+sudo make stage2
+
+# grub2 gets trashed by the kernel build probably because of zfs, so
+# grab the stage2 cache to rescue the good grub2 from it
+cp -r BUILD/var/cache/lunar cache.stage2
+sudo make kernel
+cp cache.stage2/grub2* BUILD/var/cache/lunar
 sudo make
 
 echo "Build finished at $(date)"
