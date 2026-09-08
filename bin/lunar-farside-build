@@ -114,8 +114,10 @@ EOT
 sudo make stage1
 sudo make stage2-moonbase
 
-# "m4" doesn't get installed at the right time so force install it first
+# "m4" and "libunistring" don't get installed at the right time so force
+# install them first
 sudo ISO_TARGET=$(cd BUILD && pwd) scripts/chroot-build lin m4
+sudo ISO_TARGET=$(cd BUILD && pwd) scripts/chroot-build lin libunistring
 sudo make stage2
 
 # grub2 gets trashed by the kernel build probably because of zfs, so
