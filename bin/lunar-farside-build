@@ -2,7 +2,7 @@
 
 mkdir -p ~/logs
 
-exec > ~/logs/build.$(date +%Y%m%d).log 2>&1
+exec > ~/logs/build.$(date +%Y%m%d.%H).log 2>&1
 
 NAME=farside
 FULLNAME="Gagarin" # It's the name of a crater on the far side, also the first man in space
@@ -85,7 +85,7 @@ ISO_MAJOR = 2.0.0
 ISO_DATE = $(date +%Y%m%d)
 
 # change this to taste
-ISO_MINOR = $(date +${NAME}-%Y%m%d)
+ISO_MINOR = $(date +${NAME}-%Y%m%d.%H)
 
 ifeq (,\$(ISO_MINOR))
   ISO_VERSION = \$(ISO_MAJOR)-\$(ISO_ARCH)
