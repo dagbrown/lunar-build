@@ -70,7 +70,7 @@ fi
 
 [[ -d lunar-iso ]] && sudo rm -rf lunar-iso
 
-git clone https://gitlab.lart.ca/dagbrown/lunar-iso.git
+git clone git@gitlab.lart.ca:dagbrown/lunar-iso.git
 
 cd lunar-iso
 
