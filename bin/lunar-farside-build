@@ -138,6 +138,12 @@ then
     if [ -d ~/iso ]
     then
         cp -v $i ${i}.sha256 ~/iso
+        if [ -f /.dockerenv ] && # running in a container?
+           [ "$(cat /proc/1/cmdline)" == "/usr/lib/systemd/systemd" ]
+        then
+            # shut down the container to free up tmpfs memory
+            sudo systemctl poweroff
+        fi
     fi
 fi
 
