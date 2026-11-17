@@ -30,7 +30,7 @@ do
 
             -m|--moonbase)
                 shift
-                MOONBASE_URL="$1"
+                MOONBASE="$1"
                 shift
                 continue
             ;;
@@ -52,6 +52,18 @@ if [ $1 ]
 then
     NAME="$1"
 fi
+
+# check make sure we can mount loop devices before wasting 4 hours compiling stuff
+truncate -s 1G /var/tmp/testfs.img
+mkfs.ext4 /var/tmp/testfs.img
+if ! sudo mount -o loop /var/tmp/testfs.img /mnt
+then
+    echo 'Failed to mount test loop image'
+    exit 1
+fi
+
+sudo umount /mnt
+rm /var/tmp/testfs.img
 
 echo "Build started at $(date)"
 
